@@ -13,9 +13,9 @@ module.exports = {
     /* 输出目录，没有则新建 */
     path: path.resolve(__dirname, '../dist'),
     /* 文件名 */
-    filename: 'build.js',
+    filename: '[name].js',
     /* 静态目录，可以直接从这里取文件 */
-    publicPath: '/dist',
+    publicPath: '/',
     sourcePrefix: ''
 
   },
@@ -54,7 +54,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'index.html'
+      template: 'src/index.html'
     }),
     new CopywebpackPlugin([{ from: 'node_modules/cesium/Build/Cesium/Workers', to: 'Workers' }]),
     new CopywebpackPlugin([{ from: 'node_modules/cesium/Source/Assets', to: 'Assets' }]),
@@ -62,6 +62,12 @@ module.exports = {
     new webpack.DefinePlugin({
       // Define relative base path in cesium for loading assets
       CESIUM_BASE_URL: JSON.stringify('')
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'cesium',
+      minChunks: function (module) {
+        return module.context && module.context.indexOf('cesium') !== -1;
+      }
     })
   ],
   node: {

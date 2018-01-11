@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <div id="cesiumContainer"> 
+    <h1>{{ msg }}</h1>
+    <div id="cesiumContainer">
     </div>
   </div>
 </template>
@@ -10,7 +11,9 @@ import Cesium from "cesium/Cesium";
 require("cesium/Widgets/widgets.css");
 export default {
   data() {
-    return {};
+    return {
+      msg: "Hello Cesium!"
+    };
   },
   mounted() {
     const viewer = new Cesium.Viewer("cesiumContainer");
