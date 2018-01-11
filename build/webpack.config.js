@@ -3,6 +3,8 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopywebpackPlugin = require('copy-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
 const cesiumSource = '../node_modules/cesium/Source';
 const cesiumWorkers = '../Build/Cesium/Workers';
 
@@ -44,6 +46,20 @@ module.exports = {
         exclude: /node_modules/
       },
       {
+        // Strip cesium pragmas
+        test: /\.js$/,
+        enforce: 'pre',
+        include: path.resolve(__dirname, cesiumSource),
+        use: [{
+          loader: 'strip-pragma-loader',
+          options: {
+            pragmas: {
+              debug: false
+            }
+          }
+        }]
+      },
+      {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
       }, {
@@ -68,7 +84,8 @@ module.exports = {
       minChunks: function (module) {
         return module.context && module.context.indexOf('cesium') !== -1;
       }
-    })
+    }),
+    new webpack.optimize.UglifyJsPlugin()
   ],
   node: {
     // Resolve node module use of fs
